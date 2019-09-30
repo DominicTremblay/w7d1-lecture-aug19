@@ -1,68 +1,241 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Component-Based UI w/ React
 
-## Available Scripts
+## Topics
 
-In the project directory, you can run:
+- New React Project
 
-### `npm start`
+- ES6 Review
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Review React concepts
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+- Demo:
+  - Build components in isolation with Storybook
+  - Using components in the application
 
-### `npm test`
+## New React Project: Scheduler
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- demo of the Scheduler project
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### ES6 Review
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+- Object/Array Destructuring
+- Spread operator
+- Property shorthand
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- [es6_review.js](./es6_review.js)
 
-### `npm run eject`
+### Opinions of ReactJS
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Declarative
+- Composition
+- Unidrectional Dataflow
+- Explicit Mutations
+- JavaScript-First Paradigm
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Composition / Components
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Components are the building blocks of react
+- Take a functionality of a small piece of your application and encapsulated its own isolated container
+- A component encapsulate or hide the underlying complexity of what's going on(state, events, etc)
+- You build a large app out of multiple smaller apps
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- Anatomy of a React Component
+  - a function that
+    - receives an object of properties as an input parameter
+    - returns a React element
 
-## Learn More
+```js
+import React, { Fragment } from 'react';
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+const MyComponent = (props) => {
+  return (
+		<Fragment>
+			<h1 className='title'>This is a component</h1>
+			<img src='/images/some_image.jpg' alt='some image' />
+			<input type='text' placeholder="enter some text" />
+		</Fragment>
+	);
+};
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+export default MyComponent;
+```
 
-### Code Splitting
+> **What are props?**
+> Props are properties that can be passed to components much like parameters are passed to functions.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+### JSX
 
-### Analyzing the Bundle Size
+- Each JSX element is syntactic sugar for calling the following
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+  `React.createElement(component, props, ...children)`
 
-### Making a Progressive Web App
+- Babel is transpiling JSX code into JavaScript code
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+**Some rules about JSX**
 
-### Advanced Configuration
+- Every tag must be closing even none closing tags in HTML such as \<img\> and \<input\>...\<img src=""\> becomes \<img src="" /\>
+- Components must return one root tag. If you have multiple elements, you must wrap them in a span, div, or React.Fragment
+- JavaScript expressions need to be wrapped inside {}
+- Regular HTML comments do not work in JSX. To insert comments in JSX you must use this syntax: {/\* Insert Comment Here \*/}
+- class becomes _className_
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+#### Declarative
 
-### Deployment
+- You focus on the output of the task
+- There is a level of abstraction about how it's done
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+#### Unidirectional Data Flow
 
-### `npm run build` fails to minify
+- state > UI (confusing...)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- React uses a unidirectional data flow
+
+  - Data flow is one way
+  - Data goes from parent element down to children elements (props)
+
+#### Explicit Mutations
+
+- The state is changing whenever we call `setSomething` function from `useState` hook.
+- `setSometing` triggers a re-render of the View.
+
+#### JavaScript-First Paradigm
+
+- We're still using JavaScript
+- We're not using Doman Specific Language (DML)
+
+## Storybook
+
+- Open source tool to build UI components in isolation
+
+  - You don't have to set up an application to start creating components
+  - No distraction from the UI and any of the app dependencies
+  - You can experiment, easier to test edge cases
+  - Can be shared accross teams
+  - Can be used as a style guide
+
+### Installing Storybook
+
+#### Install React
+
+`npx create-react-app tweeter-react`
+
+`cd tweeter_react`
+
+#### Install Story Book
+
+`npx -p @storybook/cli sb init`
+
+#### Storybook Folder Structure
+
+- Storybooks adds 2 folders to your project
+
+```shell
+.storybook/
+  - addons.js
+  - config.js
+...
+
+src/
+  stories/
+    - index.js
+
+```
+
+#### Changing the config
+
+To load up stories from other than index.js, we need to change the config
+
+```js
+// .storybook/config.js
+
+import { configure } from '@storybook/react';
+import '../src/index.css';
+
+const req = require.context('../src', true, /\.stories.js$/);
+
+function loadStories() {
+  req.keys().forEach(filename => req(filename));
+}
+
+configure(loadStories, module);
+```
+
+### Running the App
+
+- Storybook adds scripts to package.json and dev dependencies
+
+```json
+...
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
+  },
+...
+```
+
+```json
+...
+  "devDependencies": {
+    "@storybook/addon-actions": "^5.1.10",
+    "@storybook/addon-links": "^5.1.10",
+    "@storybook/addons": "^5.1.10",
+    "@storybook/react": "^5.1.10"
+  }
+...
+```
+
+- We run the 3 following instances in 3 terminal windows:
+  **You can either use `yarn` or `npm`**
+
+  1. `npm start` (starting the app) or `yarn start`
+  2. `npm run storybook` or `yarn run storybook`
+  3. `npm run test` (automated tests with Jest) or `yarn test`
+
+
+
+### Storybook UI
+
+**Go over Storybook interface with default stories**
+
+### Creating Stories
+
+- Each component can have multiple stories
+- A story contains a single state of the component by passing different **props**
+- Provides a visual test case
+
+* `storiesOf()` Stories for your component with one or more `add()`
+* `action()` Actions allows you to log user interactions in the Storybook UI
+
+```js
+storiesOf('myComponent', module)
+  .add('myComponentStory', () => {})
+  .add('myComponentOtherStory', () => {})
+  ...
+```
+
+
+
+#### Configuring React Sass
+
+- Install node-sass
+
+`npm i node-sass --save`
+
+- Rename all css file extension to `scss`
+
+#### Configuring Font Awesome
+
+- Refer to the instructions here
+
+- [react-fontawesome](https://github.com/FortAwesome/react-fontawesome)
+
+## Using Components
+
+- Once the stories are done we are now ready to put our components in place in `<App />`
+
+
